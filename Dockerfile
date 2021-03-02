@@ -1,7 +1,7 @@
 FROM centos:7
 VOLUME /tmp
 
-RUN yum -y install wget && yum -y install java-1.8.0-openjdk-devel
+RUN yum -y install wget && yum -y install java-1.8.0-openjdk-devel && yum -y install libSM
 
 RUN wget  http://mirrors.ustc.edu.cn/tdf/libreoffice/stable/7.1.0/rpm/x86_64/LibreOffice_7.1.0_Linux_x86-64_rpm.tar.gz \
   && wget http://mirrors.ustc.edu.cn/tdf/libreoffice/stable/7.1.0/rpm/x86_64/LibreOffice_7.1.0_Linux_x86-64_rpm_sdk.tar.gz \
@@ -17,4 +17,7 @@ RUN rm LibreOffice_7.1.0_Linux_x86-64_rpm.tar.gz \
   && rm LibreOffice_7.1.0_Linux_x86-64_rpm_sdk.tar.gz \
   && rm LibreOffice_7.1.0_Linux_x86-64_rpm_langpack_zh-CN.tar.gz
 
-RUN yum clean all
+ADD fonts/* /usr/share/fonts/
+RUN mkfontscale && mkfontdir
+
+# RUN yum clean all
