@@ -9,7 +9,7 @@ env:
 jobs:
   release:
     name: Create Release
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
