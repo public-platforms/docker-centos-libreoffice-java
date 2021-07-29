@@ -1,0 +1,31 @@
+name: release to image
+on:
+  push:
+    tags:
+      - '*'
+env:
+  IMAGE_NAME: centos-libreoffice-java
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # ${{ steps.get_version.outputs.VERSION }}
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Build image
+        run: docker build -t "${{ secrets.DOCKER_URL }}/${{ secrets.DOCKER_NAMESPACES }}/$IMAGE_NAME:${{ steps.get_version.outputs.VERSION }}" .
+
+      - name: Login into registry
+        run: echo "${{ secrets.DOCKER_PWD }}" | docker login ${{ secrets.DOCKER_URL }} -u ${{ secrets.DOCKER_USER }} --password-stdin
+
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKER_URL }}/${{ secrets.DOCKER_NAMESPACES }}/$IMAGE_NAME:${{ steps.get_version.outputs.VERSION }}
